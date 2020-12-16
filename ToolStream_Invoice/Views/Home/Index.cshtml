@@ -1,0 +1,104 @@
+﻿
+@model string
+
+
+@{
+}
+
+<header class="content__title mb-3">
+    <h1>Commercial Invoice</h1>
+</header>
+
+<div class="row mb-3">
+    <div class="col-sm-8">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Trailer Id</span>
+            </div>
+            <input type="number" class="form-control" id="search-trailer-id" placeholder="Trailer Id">
+        </div>
+    </div>
+    <div class="col-sm-4 text-xl-right">
+        <button class="btn btn-success mr-3 mb-3" style="min-width: 160px;" id="btn-search-trailer">Search Existing Trailer</button>
+        <button class="btn btn-primary mb-3" style="min-width: 160px;" id="btn-create-trailer">Create New Trailer</button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Trailer Id : <span id="trailer-id" class="text-success"></span></h4>
+
+        <div class="row justify-content-end pr-3">
+            <button class="btn btn-info mr-3 mb-3" id="btn-add-order">Add Order No.</button>
+            <button class="btn btn-warning mr-3 mb-3" id="btn-remove-order">Remove Order No.</button>
+            <button class="btn btn-danger mb-3" id="btn-create-invoice">Create Commercial Invoice</button>
+        </div>
+
+        <div class="table-responsive data-table">
+            <table id="orders-table" class="table table-bordered text-center">
+                <thead>
+                    <tr>
+                        <th class="text-yellow">OrderNumber</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<!-- Add Order Modal -->
+<div class="modal fade" id="modal-add-order" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Order</h5>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Order Number</label>
+                    <input type="text" class="form-control" id="add-order-number" value="" required />
+                    <div class="invalid-feedback">Please provide a valid input</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link" id="btn-confirm-add-order">Add</button>
+                <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Remove Order Modal -->
+<div class="modal fade" id="modal-remove-order" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Remove Order</h5>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Order Number</label>
+                    <input type="text" class="form-control" id="remove-order-number" value="" required />
+                    <div class="invalid-feedback">Please provide a valid input</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link" id="btn-confirm-remove-order">Remove</button>
+                <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!--<script src="~/js/SiteScripts/HomePage.es5.min.js" asp-append-version="true"></script>-->
+    <script src="~/js/jsPDF/jspdf.min.js" asp-append-version="true"></script>
+    <script src="~/js/jsPDF/jspdf.plugin.autotable.js" asp-append-version="true"></script>
+    <script src="~/js/SiteScripts/HomePage.js" asp-append-version="true"></script>
+
+    <script>
+
+    </script>
+}

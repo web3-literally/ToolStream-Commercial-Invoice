@@ -1,0 +1,60 @@
+﻿[
+    {
+        "outputFile": "wwwroot/js/SiteScripts/HomePage.es5.js",
+        "inputFile": "wwwroot/js/SiteScripts/HomePage.js"
+    }
+    /*
+    {
+        "outputFile": "wwwroot/css/site.css",
+        "inputFile": "wwwroot/css/site.scss"
+    },
+    {
+        "outputFile": "wwwroot/js/SiteScripts/FindStore.es5.js",
+        "inputFile": "wwwroot/js/SiteScripts/FindStore.js"
+    },
+    {
+        "outputFile": "wwwroot/js/SiteScripts/HomePage.es5.js",
+        "inputFile": "wwwroot/js/SiteScripts/HomePage.js"
+    },
+    {
+        "outputFile": "wwwroot/js/SiteScripts/NewProducts.es5.js",
+        "inputFile": "wwwroot/js/SiteScripts/NewProducts.js"
+    },
+    {
+        "outputFile": "wwwroot/js/SiteScripts/ProductDetail.es5.js",
+        "inputFile": "wwwroot/js/SiteScripts/ProductDetail.js"
+    },
+    {
+        "outputFile": "wwwroot/js/SiteScripts/ProductHome.es5.js",
+        "inputFile": "wwwroot/js/SiteScripts/ProductHome.js"
+    },
+    {
+        "outputFile": "wwwroot/js/SiteScripts/ProductList.es5.js",
+        "inputFile": "wwwroot/js/SiteScripts/ProductList.js"
+    },
+    {
+        "outputFile": "wwwroot/js/SiteScripts/site.es5.js",
+        "inputFile": "wwwroot/js/SiteScripts/site.js"
+    },
+    {
+        "outputFile": "wwwroot/js/SiteScripts/ProductSearch.es5.js",
+        "inputFile": "wwwroot/js/SiteScripts/ProductSearch.js"
+    },
+    {
+        "outputFile": "wwwroot/js/SiteScripts/Warranty.es5.js",
+        "inputFile": "wwwroot/js/SiteScripts/Warranty.js"
+    },
+    {
+        "outputFile": "wwwroot/js/SiteScripts/ShoppingCart.es5.js",
+        "inputFile": "wwwroot/js/SiteScripts/ShoppingCart.js"
+    },
+    {
+        "outputFile": "wwwroot/js/SiteScripts/Support.es5.js",
+        "inputFile": "wwwroot/js/SiteScripts/Support.js"
+    },
+    {
+        "outputFile": "wwwroot/js/SiteScripts/AboutUs.es5.js",
+        "inputFile": "wwwroot/js/SiteScripts/AboutUs.js"
+    }
+    */
+]
