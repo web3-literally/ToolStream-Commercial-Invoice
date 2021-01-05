@@ -28,7 +28,7 @@ namespace ToolStream_Invoice.DataAccess.DBDataModels
         public virtual DbSet<CreateTrailer> CreateTrailer { get; set; }
         public virtual DbSet<OrderExistStatus> OrderExistStatus { get; set; }
         public virtual DbSet<OrderUsedStatus> OrderUsedStatus { get; set; }
-        public virtual DbSet<CommercialInvoice> CommercialInvoice { get; set; }
+        public virtual DbSet<CommercialInvoiceDataModel> CommercialInvoice { get; set; }
         public virtual DbSet<CommercialInvoiceHeader> CommercialInvoiceHeader { get; set; }
         public virtual DbSet<CommercialInvoiceDetail> CommercialInvoiceDetail { get; set; }
         public virtual DbSet<CommercialInvoiceFooter> CommercialInvoiceFooter { get; set; }
@@ -76,7 +76,7 @@ namespace ToolStream_Invoice.DataAccess.DBDataModels
                 entity.Property(e => e.OrderNumber);
             });
             //Fake Builder For Procedure
-            modelBuilder.Entity<CommercialInvoice>(entity =>
+            modelBuilder.Entity<CommercialInvoiceDataModel>(entity =>
             {
                 entity.HasNoKey();
 
@@ -416,9 +416,9 @@ namespace ToolStream_Invoice.DataAccess.DBDataModels
             return retList[0].IsOrderNumberAlreadyUsed;
         }
 
-        public async Task<List<CommercialInvoice>> CreateCommercialInvoice(int trailerId)
+        public async Task<List<CommercialInvoiceDataModel>> CreateCommercialInvoice(int trailerId)
         {
-            List<CommercialInvoice> invoiceList = new List<CommercialInvoice>();
+            List<CommercialInvoiceDataModel> invoiceList = new List<CommercialInvoiceDataModel>();
             try
             {
                 SqlParameter trailerIdParam = new SqlParameter("@TrailerId", trailerId);

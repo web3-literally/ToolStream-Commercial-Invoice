@@ -1,6 +1,4 @@
 let CurrentTrailerId = null;
-let InvoiceOrderNumberList = [];
-let InvoicePrintIndex = 0;
 
 
 function emptyOrderListTable() {
@@ -128,20 +126,29 @@ $('#btn-confirm-remove-order').click(function() {
 });
 
 
-function GeneratePDFFromInvoice(doc, docWidth, docHeight) {
-    doc.setPage(doc.internal.getNumberOfPages());
-    //Add Header
-    doc.setFont("arial", "italic");
-    doc.setFontSize(18);
-    doc.text(400, 30, "Commercial Invoice");
-    doc.setDrawColor(0, 0, 0);
-    doc.setLineWidth(1.0);
-    doc.line(20, 50, docWidth - 20, 50);
+function GeneratePDFFromInvoice(data) {
+    var docWidth = 595;
+    var docHeight = 842;
+    var doc = new jsPDF("portrait", "pt", "a4"); //595 � 842
 
-    $.get(`/api/ApiGeneral/CommercialInvoiceHeader?TrailerId=${CurrentTrailerId}&OrderNumber=${InvoiceOrderNumberList[InvoicePrintIndex]}`, function(InvoiceHeader) {
-        console.log(InvoiceHeader);
+    for (let i = 0; i < data.length; i++) {
+        doc.setPage(doc.internal.getNumberOfPages());
 
-        //Add SubHeader
+        /***************************************************** Add SubHeader ******************************************************/
+        doc.setFont("arial", "italic");
+        doc.setFontSize(18);
+        doc.text(400, 30, "Commercial Invoice");
+        doc.setDrawColor(0, 0, 0);
+        doc.setLineWidth(1.0);
+        doc.line(20, 50, docWidth - 20, 50);
+
+        let InvoiceHeader = data[i].invoiceHeader;
+        let InvoiceDetails = data[i].invoiceDetails;
+        let InvoiceFooter = data[i].invoiceFooter;
+
+
+        /***************************************************** Add SubHeader ******************************************************/
+
         let SellerAddress = `${InvoiceHeader.sellerAddress1}  ${InvoiceHeader.sellerAddress2}  ${InvoiceHeader.sellerAddress3}  ` +
             `${InvoiceHeader.sellerCityOrTown}  ${InvoiceHeader.sellerStateProvinceCounty}  ${InvoiceHeader.sellerPostalCode}  ${InvoiceHeader.sellerCountry}`;
 
@@ -164,11 +171,13 @@ function GeneratePDFFromInvoice(doc, docWidth, docHeight) {
         doc.setFontSize(12);
         var strSubHeaderInfo = `Seller : ${InvoiceHeader.sellerName}\n` +
             `Address : ${SellerAddress}\n` +
+            `VAT NO : \n` +
             "\n" +
             `Importer : ${InvoiceHeader.importerName}\n` +
             `Address : ${ImporterAddress}\n` +
+            `EORI Number : \n` +
             "\n" +
-            `Customer : ${InvoiceHeader.customer}\n` +
+            `Delivery Address : ${InvoiceHeader.customer}\n` +
             `Address : ${CustomerAddress}\n` +
             "\n" +
             `Vat : ${InvoiceHeader.vatState}  ${InvoiceHeader.vatNumber}\n` +
@@ -179,183 +188,21 @@ function GeneratePDFFromInvoice(doc, docWidth, docHeight) {
         doc.setLineWidth(1.0);
         doc.line(20, 310, docWidth - 20, 310);
 
+        /***************************************************** Add Detail ******************************************************/
 
-        $.get(`/api/ApiGeneral/CommercialInvoiceDetails?TrailerId=${CurrentTrailerId}&OrderNumber=${InvoiceOrderNumberList[InvoicePrintIndex]}`, function(InvoiceDetails) {
-            console.log(InvoiceDetails);
-
-            //Add Detail
-            var tableStartY = 330;
-            var tableMargin = 20;
-            var tableBody = [];
-            var rowCount = InvoiceDetails.length;
-            for (var rowIndex = 0; rowIndex < rowCount; rowIndex++) {
-                tableBody.push({
-                    OrderLineNo: InvoiceDetails[rowIndex].orderLineNo,
-                    CountryOfOrigin: InvoiceDetails[rowIndex].countryOfOrigin,
-                    TariffNumber: InvoiceDetails[rowIndex].tariffNumber,
-                    LinePrice: Math.round(InvoiceDetails[rowIndex].linePrice * 1000) / 1000,
-                    NetWeight: Math.round(InvoiceDetails[rowIndex].netWeight * 1000) / 1000
-                });
-            }
-
-            doc.autoTable({
-                startY: tableStartY,
-                margin: tableMargin,
-                theme: 'grid',
-                headStyles: {
-                    fillColor: [100, 100, 100]
-                },
-                body: tableBody,
-                columns: [
-                    { header: 'OrderLineNo', dataKey: 'OrderLineNo' },
-                    { header: 'CountryOfOrigin', dataKey: 'CountryOfOrigin' },
-                    { header: 'TariffNumber', dataKey: 'TariffNumber' },
-                    { header: 'LinePrice', dataKey: 'LinePrice' },
-                    { header: 'NetWeight', dataKey: 'NetWeight' },
-                ],
-            });
-
-            var tableCellHeight = 22.5;
-            var tableBottom = tableStartY + (rowCount + 1) * tableCellHeight;
-            while (tableBottom >= docHeight - tableMargin)
-                tableBottom = tableBottom - docHeight + tableCellHeight + tableMargin;
-
-
-            doc.setPage(doc.internal.getNumberOfPages());
-            doc.setDrawColor(0, 0, 0);
-            doc.setLineWidth(1.0);
-            doc.line(20, tableBottom + 20, 575, tableBottom + 20);
-
-
-            $.get(`/api/ApiGeneral/CommercialInvoiceFooter?TrailerId=${CurrentTrailerId}&OrderNumber=${InvoiceOrderNumberList[InvoicePrintIndex]}`, function(InvoiceFooter) {
-                console.log(InvoiceFooter);
-
-                let footerY = tableBottom + 40;
-                if (tableBottom + 120 > docHeight) {
-                    doc.addPage();
-                    footerY = 30;
-                }
-
-                //Add SubFooter
-                var strFooterInfo = `Order Number : ${InvoiceFooter.orderNumber}\n` +
-                    `Number Of Packages : ${InvoiceFooter.numberOfPackages}\n` +
-                    `Total Value : ${Math.round(InvoiceFooter.totalValue * 1000) / 1000}\n` +
-                    `Total Weight : ${Math.round(InvoiceFooter.totalWeight * 1000) / 1000}\n` +
-                    "\n";
-                doc.text(400, footerY, strFooterInfo);
-
-                let bottomY = footerY + 100;
-                if (footerY + 100 > docHeight) {
-                    doc.addPage();
-                    bottomY = 30;
-                }
-
-                strFooterInfo = `Print Name : ${InvoiceFooter.printName}\t\t Signature : ${InvoiceFooter.signature}\t\t Position : ${InvoiceFooter.position}\t\t Date : ${InvoiceFooter.date}\t\n`;
-                doc.text(20, bottomY, strFooterInfo);
-
-
-                InvoicePrintIndex++;
-                if (InvoicePrintIndex >= InvoiceOrderNumberList.length) {
-
-                    window.open(doc.output('bloburl'), '_blank');
-
-                    InvoiceOrderNumberList = [];
-                    InvoicePrintIndex = 0;
-                    console.log("**************** COMPLETED! ***************");
-                    return;
-                }
-
-                doc.addPage();
-                GeneratePDFFromInvoice(doc, docWidth, docHeight);
-            });
-        });
-    });
-}
-
-$('#btn-create-invoice').click(function() {
-    if (CurrentTrailerId == null) {
-        customAlert("Please Search Or Create Trailer");
-        return;
-    }
-
-    $.get(`/api/ApiGeneral/CreateCommercialInvoice?TrailerId=${CurrentTrailerId}`, function(data) {
-        InvoiceOrderNumberList = [];
-        InvoicePrintIndex = 0;
-        for (let i = 0; i < data.length; i++) {
-            if (data[i]) InvoiceOrderNumberList.push(data[i].orderNumber);
-        }
-        if (InvoiceOrderNumberList.length == 0) {
-            customAlert("Trailer Is Empty! Plesae Add OrderNumber.");
-            return;
-        }
-        var docWidth = 595;
-        var docHeight = 842;
-        var doc = new jsPDF("portrait", "pt", "a4"); //595 � 842
-        GeneratePDFFromInvoice(doc, docWidth, docHeight);
-    });
-
-
-
-    return;
-
-    var docWidth = 595;
-    var docHeight = 842;
-    var doc = new jsPDF("portrait", "pt", "a4"); //595 � 842
-    for (var i = 0; i < 10; i++) {
-        doc.setPage(doc.internal.getNumberOfPages());
-        //Add Header
-        doc.setFont("arial", "italic");
-        doc.setFontSize(18);
-        doc.text(400, 30, "Commercial Invoice");
-        doc.setDrawColor(0, 0, 0);
-        doc.setLineWidth(1.0);
-        doc.line(20, 50, docWidth - 20, 50);
-
-        //Add SubHeader
-        doc.setFont("arial", "normal");
-        doc.setFontSize(12);
-        var strSubHeaderInfo = "SellerName : ToolStream LTD\n" +
-            "SellerAddress1 : Boundary Way\n" +
-            "SellerAddress2 : Lufton Trading Estate\n" +
-            "SellerAddress3 : \n" +
-            "SellerCityOrTown: Yeovil\n" +
-            "SellerStateProvinceCountry : Somerset\n" +
-            "SellerPostCode : BA228HZ\n" +
-            "SellerCountry : GB\n" +
-            "\n" +
-            "ImporterName : JDR or Baker Tilly TBC\n" +
-            "ImporterAddress1 : TBC\n" +
-            "ImporterAddress2 : TBC\n" +
-            "ImporterAddress3 : TBC\n" +
-            "ImporterCityOrTown : TBC\n" +
-            "ImporterStateProvinceCountry : TBC\n" +
-            "ImporterPostalCode : TBC \n" +
-            "ImporterCountry : NL\n" +
-            "\n" +
-            "Customer : 25998\n" +
-            "CustomerAddress1 : Torpedo Construction Ltd T/A\n" +
-            "CustomerAddress2 : Radius Ireland\n" +
-            "CustomerAddress3 : 50 Baldoyle Industrail Estate\n" +
-            "CustomerCity : Dublin\n" +
-            "CustomerCountry : IE\n" +
-            "CustomerPostalCode : D13\n" +
-            "\n" +
-            "VatState : IE\n" +
-            "VatNumber : 4871536O\n" +
-            "IcoTerms : \n" +
-            "CurrencyCode : EUR\n";
-        doc.text(20, 80, strSubHeaderInfo);
-        doc.setDrawColor(0, 0, 0);
-        doc.setLineWidth(1.0);
-        doc.line(20, 500, docWidth - 20, 500);
-
-        //Add Detail
-        var tableStartY = 520;
+        var tableStartY = 330;
         var tableMargin = 20;
         var tableBody = [];
-        var rowCount = 30;
-        for (var rowIndex = 1; rowIndex <= rowCount; rowIndex++) {
-            tableBody.push({ OrderLineNo: rowIndex, CountryOfOrigin: 'CN', TariffNumber: '82055980', LinePrice: '28.38', NetWeight: '2.4' });
+        var rowCount = InvoiceDetails.length;
+        for (var rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+            tableBody.push({
+                OrderLineNo: InvoiceDetails[rowIndex].orderLineNo,
+                ProductSKU: InvoiceDetails[rowIndex].productSKU,
+                CountryOfOrigin: InvoiceDetails[rowIndex].countryOfOrigin,
+                TariffNumber: InvoiceDetails[rowIndex].tariffNumber,
+                LinePrice: Math.round(InvoiceDetails[rowIndex].linePrice * 1000) / 1000,
+                NetWeight: Math.round(InvoiceDetails[rowIndex].netWeight * 1000) / 1000
+            });
         }
 
         doc.autoTable({
@@ -367,11 +214,12 @@ $('#btn-create-invoice').click(function() {
             },
             body: tableBody,
             columns: [
-                { header: 'OrderLineNo', dataKey: 'OrderLineNo' },
-                { header: 'CountryOfOrigin', dataKey: 'CountryOfOrigin' },
-                { header: 'TariffNumber', dataKey: 'TariffNumber' },
-                { header: 'LinePrice', dataKey: 'LinePrice' },
-                { header: 'NetWeight', dataKey: 'NetWeight' },
+                { header: 'OrderLine No', dataKey: 'OrderLineNo' },
+                { header: 'Product Code/SKU', dataKey: 'ProductSKU' },
+                { header: 'Country Of Origin', dataKey: 'CountryOfOrigin' },
+                { header: 'Tariff Number', dataKey: 'TariffNumber' },
+                { header: 'Line Price', dataKey: 'LinePrice' },
+                { header: 'Gross Weight', dataKey: 'NetWeight' },
             ],
         });
 
@@ -386,20 +234,55 @@ $('#btn-create-invoice').click(function() {
         doc.setLineWidth(1.0);
         doc.line(20, tableBottom + 20, 575, tableBottom + 20);
 
-        //Add SubFooter
-        var strFooterInfo = "Total Value : ToolStream LTD\n" +
-            "Number Of Packages : 1\n" +
-            "Total Value : 1393.96\n" +
-            "Total Weight : 319.501\n" +
+        /***************************************************** Add SubFooter ******************************************************/
+
+        let footerY = tableBottom + 40;
+        if (tableBottom + 120 > docHeight) {
+            doc.addPage();
+            footerY = 30;
+        }
+
+        var strFooterInfo = `Order Number : ${InvoiceFooter.orderNumber}\n` +
+            `Number Of Packages : ${InvoiceFooter.numberOfPackages}\n` +
+            `Total Value : ${Math.round(InvoiceFooter.totalValue * 1000) / 1000}\n` +
+            `Total Gross Weight : ${Math.round(InvoiceFooter.totalWeight * 1000) / 1000}\n` +
             "\n";
-        doc.text(400, tableBottom + 40, strFooterInfo);
+        doc.text(400, footerY, strFooterInfo);
 
-        strFooterInfo = "Print Name : \t\t Signature : \t\t Position : \t\t Date : \t\t\n";
-        doc.text(20, tableBottom + 120, strFooterInfo);
+        let bottomY = footerY + 100;
+        if (footerY + 100 > docHeight) {
+            doc.addPage();
+            bottomY = 30;
+        }
 
-        doc.addPage();
+        var strPrintName = `Print Name : ${InvoiceFooter.printName}`;
+        var strSignature = `Signature : ${InvoiceFooter.signature}`;
+        var strPosition = `Position : ${InvoiceFooter.position}`;
+        var strDate = `Date : ${InvoiceFooter.date}`;
+
+        doc.text(20, bottomY, strPrintName);
+        doc.text(300, bottomY, strPosition);
+        doc.text(20, bottomY + 40, strSignature);
+        doc.text(300, bottomY + 40, strDate);
+
+        if (i < data.length - 1) doc.addPage();
     }
 
-    //doc.save("Invoice.pdf");
     window.open(doc.output('bloburl'), '_blank');
+}
+
+
+$('#btn-create-invoice').click(function() {
+    if (CurrentTrailerId == null) {
+        customAlert("Please Search Or Create Trailer");
+        return;
+    }
+
+    $.get(`/api/ApiGeneral/CreateCommercialInvoice?TrailerId=${CurrentTrailerId}`, function(data) {
+        if (data.length == 0) {
+            customAlert("Trailer Is Empty! Plesae Add OrderNumber.");
+            return;
+        }
+        GeneratePDFFromInvoice(data);
+    });
 });

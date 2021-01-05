@@ -14,12 +14,18 @@
   <ItemGroup>
     <Content Remove="bundleconfig.json" />
     <Content Remove="compilerconfig.json" />
+    <Content Remove="wwwroot\js\SiteScripts\HomePage.es5.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\js\SiteScripts\HomePage.es5.js" />
   </ItemGroup>
 
 
   <ItemGroup>
     <None Include="bundleconfig.json" />
     <None Include="compilerconfig.json" />
+    <None Include="wwwroot\js\SiteScripts\HomePage.es5.js" />
   </ItemGroup>
 
   <ItemGroup>

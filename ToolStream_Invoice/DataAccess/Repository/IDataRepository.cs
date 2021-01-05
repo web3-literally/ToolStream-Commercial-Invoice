@@ -14,7 +14,7 @@ namespace ToolStream_Invoice.DataAccess.Repository
         Task<int> OrderNumberAlreadyUsed(string OrderNumber);
         Task<int> DoesOrderNumberExist(string OrderNumber);
 
-        Task<List<CommercialInvoice>> CreateCommercialInvoice(int TrailerId);
+        Task<List<CommercialInvoiceDataModel>> CreateCommercialInvoice(int TrailerId);
         Task<CommercialInvoiceHeader> CommercialInvoiceHeader(int TrailerId, string OrderNumber);
         Task<List<CommercialInvoiceDetail>> CommercialInvoiceDetails(int TrailerId, string OrderNumber);
         Task<CommercialInvoiceFooter> CommercialInvoiceFooter(int TrailerId, string OrderNumber);

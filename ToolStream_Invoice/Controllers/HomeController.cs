@@ -29,15 +29,6 @@ namespace ToolStream_Invoice.Controllers
             return View();
         }
 
-        public IActionResult CommercialInvoice(string id = "")
-        {
-            int nTrailerId = 0;
-            if (int.TryParse(id, out nTrailerId))
-                return View();
-            else
-                return RedirectToAction("Error");
-        }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

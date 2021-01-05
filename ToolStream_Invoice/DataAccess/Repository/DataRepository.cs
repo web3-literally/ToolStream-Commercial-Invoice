@@ -46,7 +46,7 @@ namespace ToolStream_Invoice.DataAccess.Repository
         }
 
 
-        public async Task<List<CommercialInvoice>> CreateCommercialInvoice(int TrailerId)
+        public async Task<List<CommercialInvoiceDataModel>> CreateCommercialInvoice(int TrailerId)
         {
             return await _databaseManager.CreateCommercialInvoice(TrailerId);
         }

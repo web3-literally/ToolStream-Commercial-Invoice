@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ToolStream_Invoice.DataAccess.Repository;
+using ToolStream_Invoice.DataAccess.ApiDataModels;
 
 namespace ToolStream_Invoice.Controllers.Api
 {
@@ -89,8 +90,30 @@ namespace ToolStream_Invoice.Controllers.Api
         {
             try
             {
+                List<CommercialInvoiceDataModel> listInvoiceData = new List<CommercialInvoiceDataModel>();
+
                 var invoiceList = await _dataRepository.CreateCommercialInvoice(int.Parse(TrailerId));
-                return Ok(invoiceList);
+
+                for(int i = 0; i < invoiceList.Count; i++)
+                {
+                    if (invoiceList[i] == null) continue;
+
+                    CommercialInvoiceDataModel InvoiceData = new CommercialInvoiceDataModel();
+
+                    string OrderNumber = invoiceList[i].OrderNumber;
+
+                    var InvoiceHeader = await _dataRepository.CommercialInvoiceHeader(int.Parse(TrailerId), OrderNumber);
+                    var InvoiceDetails = await _dataRepository.CommercialInvoiceDetails(int.Parse(TrailerId), OrderNumber);
+                    var InvoiceFooter = await _dataRepository.CommercialInvoiceFooter(int.Parse(TrailerId), OrderNumber);
+
+                    InvoiceData.InvoiceHeader = InvoiceHeader;
+                    InvoiceData.InvoiceDetails = InvoiceDetails;
+                    InvoiceData.InvoiceFooter = InvoiceFooter;
+
+                    listInvoiceData.Add(InvoiceData);
+                }
+
+                return Ok(listInvoiceData);
             }
             catch (Exception ex)
             {
@@ -98,6 +121,7 @@ namespace ToolStream_Invoice.Controllers.Api
             }
         }
 
+        /*
         [HttpGet("CommercialInvoiceHeader")]
         public async Task<IActionResult> CommercialInvoiceHeader(string TrailerId = "", string OrderNumber = "")
         {
@@ -139,5 +163,6 @@ namespace ToolStream_Invoice.Controllers.Api
                 return BadRequest(ex.Message);
             }
         }
+        */
     }
 }
