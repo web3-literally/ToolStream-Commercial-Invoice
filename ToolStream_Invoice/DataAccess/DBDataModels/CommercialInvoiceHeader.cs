@@ -16,6 +16,8 @@ namespace ToolStream_Invoice.DataAccess.DBDataModels
         public string SellerStateProvinceCounty { get; set; }
         public string SellerPostalCode { get; set; }
         public string SellerCountry { get; set; }
+        public string SellerVatnumber { get; set; }
+        public string SellerEORInumber { get; set; }
 
         public string ImporterName { get; set; }
         public string ImporterAddress1 { get; set; }
@@ -25,6 +27,9 @@ namespace ToolStream_Invoice.DataAccess.DBDataModels
         public string ImporterStateProvinceCounty { get; set; }
         public string ImporterPostalCode { get; set; }
         public string ImporterCountry { get; set; }
+        public string ImporterVatnumber { get; set; }
+        public string ImporterEORInumber { get; set; }
+        public string InvoiceNumber { get; set; }
 
         public string Customer { get; set; }
         public string CustomerAddress1 { get; set; }

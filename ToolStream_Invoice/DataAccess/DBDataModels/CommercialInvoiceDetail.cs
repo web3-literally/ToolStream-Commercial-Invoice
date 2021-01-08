@@ -12,6 +12,7 @@ namespace ToolStream_Invoice.DataAccess.DBDataModels
         public string CountryOfOrigin { get; set; }
         public string TariffNumber { get; set; }
         public double LinePrice { get; set; }
+        public int Units { get; set; }
         public string CurrencyCode { get; set; }
         public string PreferenceDeclaration { get; set; }
         public string CustomsProcedureCode { get; set; }

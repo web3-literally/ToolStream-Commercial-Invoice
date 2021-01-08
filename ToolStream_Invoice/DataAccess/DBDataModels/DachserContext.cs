@@ -98,6 +98,8 @@ namespace ToolStream_Invoice.DataAccess.DBDataModels
                 entity.Property(e => e.SellerStateProvinceCounty);
                 entity.Property(e => e.SellerPostalCode);
                 entity.Property(e => e.SellerCountry);
+                entity.Property(e => e.SellerVatnumber);
+                entity.Property(e => e.SellerEORInumber);
 
                 entity.Property(e => e.ImporterName);
                 entity.Property(e => e.ImporterAddress1);
@@ -107,6 +109,9 @@ namespace ToolStream_Invoice.DataAccess.DBDataModels
                 entity.Property(e => e.ImporterStateProvinceCounty);
                 entity.Property(e => e.ImporterPostalCode);
                 entity.Property(e => e.ImporterCountry);
+                entity.Property(e => e.ImporterVatnumber);
+                entity.Property(e => e.ImporterEORInumber);
+                entity.Property(e => e.InvoiceNumber);
 
                 entity.Property(e => e.Customer);
                 entity.Property(e => e.CustomerAddress1);
@@ -133,6 +138,7 @@ namespace ToolStream_Invoice.DataAccess.DBDataModels
                 entity.Property(e => e.CountryOfOrigin);
                 entity.Property(e => e.TariffNumber);
                 entity.Property(e => e.LinePrice);
+                entity.Property(e => e.Units);
                 entity.Property(e => e.CurrencyCode);
                 entity.Property(e => e.PreferenceDeclaration);
                 entity.Property(e => e.CustomsProcedureCode);
